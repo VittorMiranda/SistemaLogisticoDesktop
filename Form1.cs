@@ -81,23 +81,30 @@ namespace Sistema_Logistico
 
         private void buttonSearchVeiculo_Click(object sender, EventArgs e)
         {
-            var lista = new VeiculoRepository().Listar();
-            using (var frm = new Form2("Lista de Veículos", lista))
+            try
             {
-                if (frm.ShowDialog() == DialogResult.OK && frm.ItemSelecionado is Veiculo veiculo != false)
+                var lista = new VeiculoRepository().Listar();
+                using (var frm = new Form2("Lista de Veículos", lista))
                 {
-                    veiculoAtual = veiculo;
-                    textBoxVeiculoId.Text = veiculoAtual.VeiculoId.ToString();
-                    textBoxModelo.Text = veiculoAtual.Modelo;
-                    textBoxPlaca.Text = veiculoAtual.Placa;
-                    textBoxConsumoMedio.Text = veiculoAtual.ConsumoMedio.ToString("0.00");
-                    textBoxCargaMaxima.Text = veiculoAtual.CargaMaxima.ToString("0.00");
+                    if (frm.ShowDialog() == DialogResult.OK && frm.ItemSelecionado is Veiculo veiculo != false)
+                    {
+                        veiculoAtual = veiculo;
+                        textBoxVeiculoId.Text = veiculoAtual.VeiculoId.ToString();
+                        textBoxModelo.Text = veiculoAtual.Modelo;
+                        textBoxPlaca.Text = veiculoAtual.Placa;
+                        textBoxConsumoMedio.Text = veiculoAtual.ConsumoMedio.ToString("0.00");
+                        textBoxCargaMaxima.Text = veiculoAtual.CargaMaxima.ToString("0.00");
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao buscar veículos: " + ex.Message);
+            }
         }
-
         private void buttonEditVeiculo_Click(object sender, EventArgs e)
         {
+            
             if (veiculoAtual == null)
             {
                 MessageBox.Show("Selecione um veículo primeiro.");
@@ -227,19 +234,26 @@ namespace Sistema_Logistico
 
         private void buttonSearchMotorista_Click(object sender, EventArgs e)
         {
-            var lista = motoristaRepository.Listar();
-            using (var frm = new Form2("Lista de Motoristas", lista))
+            try
             {
-                if (frm.ShowDialog() == DialogResult.OK && frm.ItemSelecionado is Motorista motorista)
+                var lista = motoristaRepository.Listar();
+                using (var frm = new Form2("Lista de Motoristas", lista))
                 {
-                    motoristaAtual = motorista;
-                    motoristaSelecionadoId = motorista.MotoristaId;
+                    if (frm.ShowDialog() == DialogResult.OK && frm.ItemSelecionado is Motorista motorista)
+                    {
+                        motoristaAtual = motorista;
+                        motoristaSelecionadoId = motorista.MotoristaId;
 
-                    textBoxMotoristaId.Text = motoristaAtual.MotoristaId.ToString();
-                    textBoxNomeMotorista.Text = motoristaAtual.Nome;
-                    textBoxCNH.Text = motoristaAtual.CNH;
-                    textBoxNumeroCelular.Text = motoristaAtual.Telefone;
+                        textBoxMotoristaId.Text = motoristaAtual.MotoristaId.ToString();
+                        textBoxNomeMotorista.Text = motoristaAtual.Nome;
+                        textBoxCNH.Text = motoristaAtual.CNH;
+                        textBoxNumeroCelular.Text = motoristaAtual.Telefone;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao buscar motoristas: " + ex.Message);
             }
         }
 
@@ -274,27 +288,34 @@ namespace Sistema_Logistico
 
         private void buttonSalvarRota_Click(object sender, EventArgs e)
         {
-            var rota = new Rota
+            try
             {
-                Origem = textBoxOrigem.Text,
-                Destino = textBoxDestino.Text,
-                Distancia = Convert.ToDecimal(textBoxDistancia.Text)
-            };
+                var rota = new Rota
+                {
+                    Origem = textBoxOrigem.Text,
+                    Destino = textBoxDestino.Text,
+                    Distancia = Convert.ToDecimal(textBoxDistancia.Text)
+                };
 
-            if (rotaSelecionadaId == null)
-            {
-                rotaRepository.Inserir(rota);
-                MessageBox.Show("Rota cadastrada com sucesso!");
-            }
-            else
-            {
-                rota.RotaId = rotaSelecionadaId.Value;
-                rotaRepository.Atualizar(rota);
-                MessageBox.Show("Rota atualizada com sucesso!");
-                rotaSelecionadaId = null;
-            }
+                if (rotaSelecionadaId == null)
+                {
+                    rotaRepository.Inserir(rota);
+                    MessageBox.Show("Rota cadastrada com sucesso!");
+                }
+                else
+                {
+                    rota.RotaId = rotaSelecionadaId.Value;
+                    rotaRepository.Atualizar(rota);
+                    MessageBox.Show("Rota atualizada com sucesso!");
+                    rotaSelecionadaId = null;
+                }
 
-            LimparCamposRota();
+                LimparCamposRota();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro: " + ex.Message);
+            }
         }
 
         private void buttonEditRota_Click(object sender, EventArgs e)
@@ -304,29 +325,42 @@ namespace Sistema_Logistico
                 MessageBox.Show("Selecione uma rota primeiro.");
                 return;
             }
-
-            rotaAtual.Origem = textBoxOrigem.Text;
-            rotaAtual.Destino = textBoxDestino.Text;
-            rotaAtual.Distancia = Convert.ToDecimal(textBoxDistancia.Text);
-            rotaRepository.Atualizar(rotaAtual);
-            MessageBox.Show("Rota atualizada com sucesso!");
+            try
+            {
+                rotaAtual.Origem = textBoxOrigem.Text;
+                rotaAtual.Destino = textBoxDestino.Text;
+                rotaAtual.Distancia = Convert.ToDecimal(textBoxDistancia.Text);
+                rotaRepository.Atualizar(rotaAtual);
+                MessageBox.Show("Rota atualizada com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao atualizar rota: {ex.Message}");
+            }
         }
 
         private void buttonSearchRota_Click(object sender, EventArgs e)
         {
-            var lista = rotaRepository.Listar();
-            using (var frm = new Form2("Lista de Rotas", lista))
+            try
             {
-                if (frm.ShowDialog() == DialogResult.OK && frm.ItemSelecionado is Rota rota)
+                var lista = rotaRepository.Listar();
+                using (var frm = new Form2("Lista de Rotas", lista))
                 {
-                    rotaAtual = rota;
-                    rotaSelecionadaId = rota.RotaId;
+                    if (frm.ShowDialog() == DialogResult.OK && frm.ItemSelecionado is Rota rota)
+                    {
+                        rotaAtual = rota;
+                        rotaSelecionadaId = rota.RotaId;
 
-                    textBoxRotaId.Text = rotaAtual.RotaId.ToString();
-                    textBoxOrigem.Text = rotaAtual.Origem;
-                    textBoxDestino.Text = rotaAtual.Destino;
-                    textBoxDistancia.Text = rotaAtual.Distancia.ToString("0.00");
+                        textBoxRotaId.Text = rotaAtual.RotaId.ToString();
+                        textBoxOrigem.Text = rotaAtual.Origem;
+                        textBoxDestino.Text = rotaAtual.Destino;
+                        textBoxDistancia.Text = rotaAtual.Distancia.ToString("0.00");
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao buscar rotas: " + ex.Message);
             }
         }
 
@@ -346,9 +380,15 @@ namespace Sistema_Logistico
 
             if (confirmar == DialogResult.Yes)
             {
-                rotaRepository.ExcluirLogico(rotaAtual.RotaId);
-                MessageBox.Show("Rota excluída com sucesso!");
-                LimparCamposRota();
+                try {                 
+                    rotaRepository.ExcluirLogico(rotaAtual.RotaId);
+                    MessageBox.Show("Rota excluída com sucesso!");
+                    LimparCamposRota();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao excluir rota: {ex.Message}");
+                }
             }
         }
         private void LimparCamposRota()
@@ -363,27 +403,34 @@ namespace Sistema_Logistico
 
         private void buttonSavePreco_Click(object sender, EventArgs e)
         {
-            var preco = new PrecoCombustivel
+            try
             {
-                Combustivel = textBoxCombustivelPrecomb.Text,
-                Preco = Convert.ToDecimal(textBoxPrecoPrecomb.Text),
-                DataConsulta = dateTimePickerDataConsultaPrecomb.Value
-            };
+                var preco = new PrecoCombustivel
+                {
+                    Combustivel = textBoxCombustivelPrecomb.Text,
+                    Preco = Convert.ToDecimal(textBoxPrecoPrecomb.Text),
+                    DataConsulta = dateTimePickerDataConsultaPrecomb.Value
+                };
 
-            if (precoSelecionadoId == null)
-            {
-                precoCombustivelRepository.Inserir(preco);
-                MessageBox.Show("Preço de combustível cadastrado!");
-            }
-            else
-            {
-                preco.PrecoId = precoSelecionadoId.Value;
-                precoCombustivelRepository.Atualizar(preco);
-                MessageBox.Show("Preço atualizado!");
-                precoSelecionadoId = null;
-            }
+                if (precoSelecionadoId == null)
+                {
+                    precoCombustivelRepository.Inserir(preco);
+                    MessageBox.Show("Preço de combustível cadastrado!");
+                }
+                else
+                {
+                    preco.PrecoId = precoSelecionadoId.Value;
+                    precoCombustivelRepository.Atualizar(preco);
+                    MessageBox.Show("Preço atualizado!");
+                    precoSelecionadoId = null;
+                }
 
-            LimparCamposPreco();
+                LimparCamposPreco();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro: " + ex.Message);
+            }
         }
 
         private void buttonEditPreco_Click(object sender, EventArgs e)
@@ -393,32 +440,45 @@ namespace Sistema_Logistico
                 MessageBox.Show("Selecione um preço primeiro.");
                 return;
             }
+            try
+            {
+                precoAtual.Combustivel = textBoxCombustivelPrecomb.Text;
+                precoAtual.Preco = Convert.ToDecimal(textBoxPrecoPrecomb.Text);
+                precoAtual.DataConsulta = dateTimePickerDataConsultaPrecomb.Value;
 
-            precoAtual.Combustivel = textBoxCombustivelPrecomb.Text;
-            precoAtual.Preco = Convert.ToDecimal(textBoxPrecoPrecomb.Text);
-            precoAtual.DataConsulta = dateTimePickerDataConsultaPrecomb.Value;
-
-            precoCombustivelRepository.Atualizar(precoAtual);
-            MessageBox.Show("Preço atualizado com sucesso!");
-            LimparCamposPreco();
+                precoCombustivelRepository.Atualizar(precoAtual);
+                MessageBox.Show("Preço atualizado com sucesso!");
+                LimparCamposPreco();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao atualizar preço: {ex.Message}");
+            }
         }
 
         private void buttonSearchPreco_Click(object sender, EventArgs e)
         {
-            var lista = precoCombustivelRepository.Listar();
-            using (var frm = new Form2("Lista de Preços de Combustível", lista))
+            try
             {
-                if (frm.ShowDialog() == DialogResult.OK && frm.ItemSelecionado is PrecoCombustivel preco)
+                var lista = precoCombustivelRepository.Listar();
+                using (var frm = new Form2("Lista de Preços de Combustível", lista))
                 {
-                    precoAtual = preco;
-                    precoSelecionadoId = preco.PrecoId;
+                    if (frm.ShowDialog() == DialogResult.OK && frm.ItemSelecionado is PrecoCombustivel preco)
+                    {
+                        precoAtual = preco;
+                        precoSelecionadoId = preco.PrecoId;
 
-                    textBoxCombustivelId.Text = preco.PrecoId.ToString();
-                    textBoxCombustivelPrecomb.Text = preco.Combustivel;
-                    textBoxPrecoPrecomb.Text = preco.Preco.ToString("0.00");
-                    dateTimePickerDataConsultaPrecomb.Value = preco.DataConsulta;
+                        textBoxCombustivelId.Text = preco.PrecoId.ToString();
+                        textBoxCombustivelPrecomb.Text = preco.Combustivel;
+                        textBoxPrecoPrecomb.Text = preco.Preco.ToString("0.00");
+                        dateTimePickerDataConsultaPrecomb.Value = preco.DataConsulta;
 
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao buscar preços: " + ex.Message);
             }
         }
 
@@ -438,9 +498,16 @@ namespace Sistema_Logistico
 
             if (confirmar == DialogResult.Yes)
             {
-                precoCombustivelRepository.Excluir(precoAtual.PrecoId);
-                MessageBox.Show("Preço excluído com sucesso!");
-                LimparCamposPreco();
+                try
+                {
+                    precoCombustivelRepository.Excluir(precoAtual.PrecoId);
+                    MessageBox.Show("Preço excluído com sucesso!");
+                    LimparCamposPreco();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao excluir preço: {ex.Message}");
+                }
             }
         }
         private void LimparCamposPreco()
